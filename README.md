@@ -1,8 +1,8 @@
 # MyGram Final Bootcamp Golang Project
 * [Photo](#photo)
-  * [POST Create Photo](#post-create-photo)
-  * [GET Get All Photo](#get-get-all-photo)
-  * [Map Image API](#map-image-api)
+* [User](#user)
+* [Comment](#comment)
+* [Social Media](#social-media)
 
 # Authentication
 
