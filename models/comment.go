@@ -7,11 +7,11 @@ import (
 
 type Comment struct {
 	gorm.Model
-	Message string `gorm:"not null" json:"message" form:"message" valid:"required~Message of your photo is required"`
-	PhotoID int
-	Photo   *Photo
+	Message string `json:"message" form:"message" valid:"required~Comment message is required"`
 	UserID  uint
 	User    *User
+	PhotoID uint
+	Photo   *Photo
 }
 
 func (p *Comment) BeforeCreate(tx *gorm.DB) (err error) {
@@ -27,10 +27,22 @@ func (p *Comment) BeforeCreate(tx *gorm.DB) (err error) {
 }
 
 func (p *Comment) BeforeUpdate(tx *gorm.DB) (err error) {
-	_, errCreate := govalidator.ValidateStruct(p)
+	_, errUpdate := govalidator.ValidateStruct(p)
 
-	if errCreate != nil {
-		err = errCreate
+	if errUpdate != nil {
+		err = errUpdate
+		return
+	}
+
+	err = nil
+	return
+}
+
+func (p *Comment) BeforeDelete(tx *gorm.DB) (err error) {
+	_, errDelete := govalidator.ValidateStruct(p)
+
+	if errDelete != nil {
+		err = errDelete
 		return
 	}
 

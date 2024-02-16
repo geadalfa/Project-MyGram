@@ -33,9 +33,9 @@ func StartApp() *gin.Engine {
 	commentRouter := r.Group("/comments")
 	{
 		commentRouter.Use(middlewares.Authentication())
-		commentRouter.POST("/", controllers.CreateComment)
 		commentRouter.GET("/", controllers.GetAllComments)
 		commentRouter.GET("/:commentId", controllers.GetComment)
+		commentRouter.POST("/:photoId", controllers.CreateComment)
 		commentRouter.PUT("/:commentId", middlewares.CommentAuthorization(), controllers.UpdateComment)
 		commentRouter.DELETE("/:commentId", middlewares.CommentAuthorization(), controllers.DeleteComment)
 	}

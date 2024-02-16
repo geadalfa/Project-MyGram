@@ -16,70 +16,79 @@ func CreateComment(c *gin.Context) {
 	db := database.GetDB()
 	userData := c.MustGet("userData").(jwt.MapClaims)
 	contentType := helpers.GetContentType(c)
+	_, _ = db, contentType
 
-	Comment := models.Comment{}
-	userID := uint(userData["id"].(float64))
-
+	newComment := models.Comment{}
+	userId := uint(userData["id"].(float64))
+	photoId, _ := strconv.Atoi(c.Param("photoId"))
 	if contentType == appJSON {
-		c.ShouldBindJSON(&Comment)
+		c.ShouldBindJSON(&newComment)
 	} else {
-		c.ShouldBind(&Comment)
+		c.ShouldBind(&newComment)
 	}
 
-	Comment.UserID = userID
-
-	err := db.Debug().Create(&Comment).Error
+	newComment.UserID = userId
+	newComment.PhotoID = uint(photoId)
+	err := db.Debug().Create(&newComment).Error
 
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error":   "Bad Request",
-			"message": err.Error(),
+			"error_status":  "Bad Request",
+			"error_message": "Bad Request",
 		})
 		return
 	}
 
-	c.JSON(http.StatusCreated, Comment)
+	c.JSON(http.StatusCreated, newComment)
 }
 
 func GetAllComments(c *gin.Context) {
 	db := database.GetDB()
-	Comments := []models.Comment{}
+	userData := c.MustGet("userData").(jwt.MapClaims)
 
-	err := db.Find(&Comments).Error
+	userId := uint(userData["id"].(float64))
+	var comments []models.Comment
 
+	// Retrieve all comments associated with the user
+	err := db.Preload("User").Preload("Photo").Where("user_id = ?", userId).Find(&comments).Error
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error":   "Bad Request",
-			"message": err.Error(),
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
+			"error_status":  "Failed to get data",
+			"error_message": "Something went wrong when trying to get data",
 		})
 		return
 	}
 
-	c.JSON(http.StatusCreated, Comments)
+	c.JSON(http.StatusOK, gin.H{
+		"comments": comments,
+	})
 }
 
 func GetComment(c *gin.Context) {
 	db := database.GetDB()
-	userData := c.MustGet("userData").(jwt.MapClaims)
-	Comment := models.Comment{}
 
-	commentId, _ := strconv.Atoi(c.Param("commentId"))
-	userID := uint(userData["id"].(float64))
-
-	Comment.UserID = userID
-	Comment.ID = uint(commentId)
-
-	err := db.First(&Comment, "id = ?", commentId).Error
-
+	commentID, err := strconv.Atoi(c.Param("commentId"))
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error":   "Bad Request",
-			"message": err.Error(),
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+			"error_status":  "Bad Request",
+			"error_message": "Invalid comment ID",
 		})
 		return
 	}
 
-	c.JSON(http.StatusCreated, Comment)
+	comment := models.Comment{}
+	err = db.Preload("User").Preload("Photo").First(&comment, commentID).Error
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusNotFound, gin.H{
+			"error_status":  "Comment not found",
+			"error_message": fmt.Sprintf("Comment with ID %v not found", commentID),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"comment": comment,
+	})
 }
 
 func UpdateComment(c *gin.Context) {
