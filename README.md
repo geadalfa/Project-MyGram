@@ -4,6 +4,12 @@
 * [Comment](#comment)
 * [Social Media](#social-media)
 
+## [Postman Collection](MyGram.postman_collection.json)
+* Run postman documentation
+
+[![Postman Documentation](https://run.pstmn.io/button.svg)](https://documenter.getpostman.com/view/18678511/2sA2r6YQZm)
+
+
 # Authentication
 
 - HTTP Authentication, scheme: bearer
