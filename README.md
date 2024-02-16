@@ -1,27 +1,8 @@
----
-title: My Project
-language_tabs:
-  - shell: Shell
-  - http: HTTP
-  - javascript: JavaScript
-  - ruby: Ruby
-  - python: Python
-  - php: PHP
-  - java: Java
-  - go: Go
-toc_footers: []
-includes: []
-search: true
-code_clipboard: true
-highlight_theme: darkula
-headingLevel: 2
-generator: "@tarslib/widdershins v4.0.20"
-
----
-
-# My Project
-
-Base URLs:
+# MyGram Final Bootcamp Golang Project
+* [Photo](#photo)
+  * [POST Create Photo](#post-create-photo)
+  * [GET Get All Photo](#get-get-all-photo)
+  * [Map Image API](#map-image-api)
 
 # Authentication
 
@@ -1151,6 +1132,3 @@ HTTP Status Code **201**
 |Name|Type|Required|Restrictions|Title|description|
 |---|---|---|---|---|---|
 |» message|string|true|none||none|
-
-# Data Schema
-
